@@ -1,12 +1,8 @@
 const express = require("express");
-const bodyParser = require("body-parser");
+const routes = require("./routes");
 
 const app = express();
-
-app.use(bodyParser.json());
-
-app.get("/", (req, res) => res.status(200).send({ message: "teste json!" }));
-
+routes(app);
 app.listen(3000, () => console.log("Iniciou corretamente!"));
 
 module.exports = app;
