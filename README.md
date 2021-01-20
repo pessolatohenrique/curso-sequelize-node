@@ -35,4 +35,4 @@ Para utilização do sequelize em linha de comando (CLI), utilizar:
 
 Por exemplo:
 
-    npx sequelize-cli db:migrate
+    npx sequelize-cli --help
