@@ -1,33 +1,35 @@
-const model = require("../models").Person;
+const model = require("../models").Level;
 
-class PersonController {
+class LevelController {
   static async index(req, res) {
     try {
-      const persons = await model.findAll();
-      return res.status(200).json(persons);
+      const levels = await model.findAll();
+      return res.status(200).json(levels);
     } catch (error) {
-      return res.status(500).json(error.message);
+      return res.status(500).json(error);
     }
   }
 
   static async show(req, res) {
     const { id } = req.params;
+
     try {
-      const person = await model.findOne({
+      const level = await model.findOne({
         where: { id: Number(id) },
       });
-      return res.status(200).json(person);
+
+      return res.status(200).json(level);
     } catch (error) {
-      res.status(500).json(error);
+      return res.status(500).json(error);
     }
   }
 
   static async store(req, res) {
     try {
-      const person = await model.create(req.body);
-      return res.status(200).json(person);
+      const level = await model.create(req.body);
+      return res.status(200).json(level);
     } catch (error) {
-      res.status(500).json(error);
+      return res.status(500).json(error);
     }
   }
 
@@ -39,16 +41,16 @@ class PersonController {
       });
 
       if (updated) {
-        const person = await model.findOne({
+        const level = await model.findOne({
           where: { id: Number(id) },
         });
 
-        return res.status(200).json(person);
+        return res.status(200).json(level);
       }
 
       return res.status(200).json(null);
     } catch (error) {
-      res.status(500).json(error);
+      return res.status(500).json(error);
     }
   }
 
@@ -58,14 +60,14 @@ class PersonController {
       const deleted = await model.destroy({ where: { id: Number(id) } });
 
       if (deleted) {
-        return res.status(200).json({ message: `person ${id} was deleted` });
+        return res.status(200).json({ message: `level ${id} was deleted` });
       }
 
-      return res.status(200).json({ message: `person ${id} not found` });
+      return res.status(200).json({ message: `level ${id} was not found` });
     } catch (error) {
-      res.status(500).json(error);
+      return res.status(500).json(error);
     }
   }
 }
 
-module.exports = PersonController;
+module.exports = LevelController;
