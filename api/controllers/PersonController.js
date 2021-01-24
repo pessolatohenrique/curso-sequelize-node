@@ -18,7 +18,7 @@ class PersonController {
       });
       return res.status(200).json(person);
     } catch (error) {
-      res.status(500).json(error);
+      return res.status(500).json(error);
     }
   }
 
@@ -27,7 +27,7 @@ class PersonController {
       const person = await model.create(req.body);
       return res.status(200).json(person);
     } catch (error) {
-      res.status(500).json(error);
+      return res.status(500).json(error);
     }
   }
 
@@ -48,7 +48,7 @@ class PersonController {
 
       return res.status(200).json(null);
     } catch (error) {
-      res.status(500).json(error);
+      return res.status(500).json(error);
     }
   }
 
@@ -63,7 +63,7 @@ class PersonController {
 
       return res.status(200).json({ message: `person ${id} not found` });
     } catch (error) {
-      res.status(500).json(error);
+      return res.status(500).json(error);
     }
   }
 }

@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       });
 
       Enrollment.belongsTo(models.Team, {
-        foreignKey: "teacher_id",
+        foreignKey: "team_id",
       });
     }
   }
