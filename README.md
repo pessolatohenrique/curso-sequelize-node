@@ -19,7 +19,15 @@ Acesse a pasta do projeto e rode o comando para instalar as dependências npm:
 
     npm install
 
-Criar arquivo .env e configurar as variáveis de ambiente, semelhantes ao arquivo ".env-example":
+Criar arquivo .env e configurar as variáveis de ambiente, semelhantes ao arquivo ".env-example".
+
+Execute as "migrations" disponíveis, por meio do comando:
+
+    npx sequelize-cli db:migrate
+
+Execute os "seeders" disponíveis, por meio do comando:
+
+    npx sequelize-cli db:seed:all
 
 E, por fim, rode o projeto:
 
