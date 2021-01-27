@@ -68,6 +68,21 @@ class LevelController {
       return res.status(500).json(error);
     }
   }
+
+  static async restore(req, res) {
+    try {
+      const { id } = req.params;
+      const restored = await model.restore({ where: { id: Number(id) } });
+
+      if (restored) {
+        return res.status(200).json({ message: `level ${id} was restored` });
+      }
+
+      return res.status(200).json({ message: `level ${id} was not found` });
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  }
 }
 
 module.exports = LevelController;

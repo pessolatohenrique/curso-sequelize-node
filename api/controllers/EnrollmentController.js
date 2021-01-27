@@ -71,10 +71,37 @@ class EnrollmentController {
       if (deleted) {
         return res
           .status(200)
-          .json({ message: `enrollment ${id} was deleted` });
+          .json({ message: `enrollment ${enrollment_id} was deleted` });
       }
 
-      return res.status(200).json({ message: `enrollment ${id} not found` });
+      return res
+        .status(200)
+        .json({ message: `enrollment ${enrollment_id} not found` });
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  }
+
+  static async restore(req, res) {
+    try {
+      const { student_id, enrollment_id } = req.params;
+
+      const restored = await model.restore({
+        where: {
+          id: Number(enrollment_id),
+          student_id: Number(student_id),
+        },
+      });
+
+      if (restored) {
+        return res
+          .status(200)
+          .json({ message: `enrollment ${enrollment_id} was restaured` });
+      }
+
+      return res
+        .status(200)
+        .json({ message: `enrollment ${enrollment_id} not found` });
     } catch (error) {
       return res.status(500).json(error);
     }

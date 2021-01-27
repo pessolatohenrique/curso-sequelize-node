@@ -20,4 +20,9 @@ router.delete(
   EnrollmentController.delete
 );
 
+router.put(
+  "/person/:student_id/enrollment/:enrollment_id/restore",
+  EnrollmentController.restore
+);
+
 module.exports = router;

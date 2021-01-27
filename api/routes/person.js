@@ -8,5 +8,6 @@ router.get("/person/:id", PersonController.show);
 router.post("/person", PersonController.store);
 router.put("/person/:id", PersonController.update);
 router.delete("/person/:id", PersonController.delete);
+router.put("/person/:id/restore", PersonController.restore);
 
 module.exports = router;
