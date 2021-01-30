@@ -20,10 +20,36 @@ module.exports = (sequelize, DataTypes) => {
   }
   Person.init(
     {
-      name: DataTypes.STRING,
-      active: DataTypes.BOOLEAN,
-      email: DataTypes.STRING,
-      role: DataTypes.STRING,
+      name: {
+        type: DataTypes.STRING,
+        validate: {
+          len: [3],
+        },
+      },
+      active: {
+        type: DataTypes.BOOLEAN,
+        validate: {
+          isSendingValue(value) {
+            if (value) {
+              throw new Error(
+                "The field 'active' cannot be changed by POST or PUT"
+              );
+            }
+          },
+        },
+      },
+      email: {
+        type: DataTypes.STRING,
+        validate: {
+          isEmail: true,
+        },
+      },
+      role: {
+        type: DataTypes.STRING,
+        validate: {
+          isIn: [["estudante", "docente"]],
+        },
+      },
     },
     {
       sequelize,
