@@ -10,6 +10,24 @@ class PersonController {
     }
   }
 
+  static async getAll(req, res) {
+    try {
+      const persons = await model.scope("all").findAll();
+      return res.status(200).json(persons);
+    } catch (error) {
+      return res.status(500).json(error.message);
+    }
+  }
+
+  static async getInactive(req, res) {
+    try {
+      const persons = await model.scope("inactives").findAll();
+      return res.status(200).json(persons);
+    } catch (error) {
+      return res.status(500).json(error.message);
+    }
+  }
+
   static async show(req, res) {
     const { id } = req.params;
     try {
