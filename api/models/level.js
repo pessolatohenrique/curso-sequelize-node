@@ -16,7 +16,13 @@ module.exports = (sequelize, DataTypes) => {
   }
   Level.init(
     {
-      description: DataTypes.STRING,
+      description: {
+        type: DataTypes.STRING,
+        unique: true,
+        validate: {
+          len: [3],
+        },
+      },
     },
     {
       sequelize,
