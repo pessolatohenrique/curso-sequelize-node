@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Person.hasMany(models.Enrollment, {
         foreignKey: "student_id",
+        scope: { status: "confirmado" },
       });
 
       Person.hasMany(models.Team, {

@@ -28,6 +28,19 @@ class PersonController {
     }
   }
 
+  static async getEnrollments(req, res) {
+    try {
+      const { id } = req.params;
+      const person = await model.findOne({
+        where: { id: Number(id) },
+      });
+      const enrollments = await person.getEnrollments();
+      return res.status(200).json(enrollments);
+    } catch (error) {
+      return res.status(500).json(error.message);
+    }
+  }
+
   static async show(req, res) {
     const { id } = req.params;
     try {
