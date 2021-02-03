@@ -3,6 +3,8 @@ const EnrollmentController = require("../controllers/EnrollmentController");
 
 const router = Router();
 
+router.get("/team/:team_id/enrollment", EnrollmentController.index);
+
 router.get(
   "/person/:student_id/enrollment/:enrollment_id",
   EnrollmentController.show

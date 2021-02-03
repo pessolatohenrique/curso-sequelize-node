@@ -1,6 +1,21 @@
 const model = require("../models").Enrollment;
 
 class EnrollmentController {
+  static async index(req, res) {
+    try {
+      const { team_id } = req.params;
+      const enrollments = await model.findAndCountAll({
+        where: {
+          status: "confirmado",
+          team_id: Number(team_id),
+        },
+      });
+
+      return res.status(200).json(enrollments);
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  }
   static async show(req, res) {
     try {
       const { student_id, enrollment_id } = req.params;
