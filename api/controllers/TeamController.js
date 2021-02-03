@@ -1,5 +1,6 @@
-const { Op } = require("sequelize");
+const { Op, literal } = require("sequelize");
 const model = require("../models").Team;
+const enrollment = require("../models").Enrollment;
 
 class TeamController {
   static async index(req, res) {
@@ -17,6 +18,22 @@ class TeamController {
           start_date: { [Op.between]: [start, end] },
         },
       });
+      return res.status(200).json(teams);
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  }
+
+  static async getCrowded(req, res) {
+    const MAX_LOTATION = 2;
+
+    try {
+      const teams = await enrollment.findAndCountAll({
+        attributes: ["team_id"],
+        group: "team_id",
+        having: literal(`COUNT(team_id) >= ${MAX_LOTATION}`),
+      });
+
       return res.status(200).json(teams);
     } catch (error) {
       return res.status(500).json(error);
