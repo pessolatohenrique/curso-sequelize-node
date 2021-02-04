@@ -1,4 +1,6 @@
+const generic = require("../models");
 const model = require("../models").Person;
+const enrollment = require("../models").Enrollment;
 
 class PersonController {
   static async index(req, res) {
@@ -86,13 +88,27 @@ class PersonController {
   static async delete(req, res) {
     try {
       const { id } = req.params;
-      const deleted = await model.destroy({ where: { id: Number(id) } });
 
-      if (deleted) {
-        return res.status(200).json({ message: `person ${id} was deleted` });
-      }
+      await generic.sequelize.transaction(async (t) => {
+        const deleted = await model.destroy(
+          {
+            where: { id: Number(id) },
+          },
+          { transaction: t }
+        );
 
-      return res.status(200).json({ message: `person ${id} not found` });
+        const updated = await enrollment.update(
+          { status: "cancelado" },
+          { where: { student_id: Number(id) } },
+          { transaction: t }
+        );
+
+        if (deleted && updated) {
+          return res.status(200).json({ message: `person ${id} was deleted` });
+        }
+
+        return res.status(200).json({ message: `person ${id} not found` });
+      });
     } catch (error) {
       return res.status(500).json(error);
     }
@@ -101,13 +117,22 @@ class PersonController {
   static async restore(req, res) {
     try {
       const { id } = req.params;
-      const restored = await model.restore({ where: { id: Number(id) } });
 
-      if (restored) {
-        return res.status(200).json({ message: `person ${id} was restored` });
-      }
+      await generic.sequelize.transaction(async (t) => {
+        const restored = await model.restore({ where: { id: Number(id) } });
 
-      return res.status(200).json({ message: `person ${id} not found` });
+        const updated = await enrollment.update(
+          { status: "confirmado" },
+          { where: { student_id: Number(id) } },
+          { transaction: t }
+        );
+
+        if (restored && updated) {
+          return res.status(200).json({ message: `person ${id} was restored` });
+        }
+
+        return res.status(200).json({ message: `person ${id} not found` });
+      });
     } catch (error) {
       return res.status(500).json(error);
     }
