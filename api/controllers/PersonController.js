@@ -1,11 +1,11 @@
-const generic = require("../models");
-const model = require("../models").Person;
-const enrollment = require("../models").Enrollment;
+const { PersonService } = require("../services");
+
+const service = new PersonService("Person");
 
 class PersonController {
   static async index(req, res) {
     try {
-      const persons = await model.findAll();
+      const persons = await service.findAll();
       return res.status(200).json(persons);
     } catch (error) {
       return res.status(500).json(error.message);
@@ -14,7 +14,7 @@ class PersonController {
 
   static async getAll(req, res) {
     try {
-      const persons = await model.scope("all").findAll();
+      const persons = await service.getActivesAndInactives();
       return res.status(200).json(persons);
     } catch (error) {
       return res.status(500).json(error.message);
@@ -23,7 +23,7 @@ class PersonController {
 
   static async getInactive(req, res) {
     try {
-      const persons = await model.scope("inactives").findAll();
+      const persons = await service.getInactives();
       return res.status(200).json(persons);
     } catch (error) {
       return res.status(500).json(error.message);
@@ -33,10 +33,7 @@ class PersonController {
   static async getEnrollments(req, res) {
     try {
       const { id } = req.params;
-      const person = await model.findOne({
-        where: { id: Number(id) },
-      });
-      const enrollments = await person.getEnrollments();
+      const enrollments = await service.getEnrollments(id);
       return res.status(200).json(enrollments);
     } catch (error) {
       return res.status(500).json(error.message);
@@ -46,9 +43,7 @@ class PersonController {
   static async show(req, res) {
     const { id } = req.params;
     try {
-      const person = await model.findOne({
-        where: { id: Number(id) },
-      });
+      const person = await service.findOne(id);
       return res.status(200).json(person);
     } catch (error) {
       return res.status(500).json(error);
@@ -57,7 +52,7 @@ class PersonController {
 
   static async store(req, res) {
     try {
-      const person = await model.create(req.body);
+      const person = await service.create(req.body);
       return res.status(200).json(person);
     } catch (error) {
       return res.status(500).json(error);
@@ -67,15 +62,10 @@ class PersonController {
   static async update(req, res) {
     try {
       const { id } = req.params;
-      const updated = await model.update(req.body, {
-        where: { id: Number(id) },
-      });
+      const updated = await service.update(req.body, { id: Number(id) });
 
       if (updated) {
-        const person = await model.findOne({
-          where: { id: Number(id) },
-        });
-
+        const person = await service.findOne(id);
         return res.status(200).json(person);
       }
 
@@ -88,27 +78,13 @@ class PersonController {
   static async delete(req, res) {
     try {
       const { id } = req.params;
+      const updatedDeleted = await service.destroy(id);
 
-      await generic.sequelize.transaction(async (t) => {
-        const deleted = await model.destroy(
-          {
-            where: { id: Number(id) },
-          },
-          { transaction: t }
-        );
+      if (updatedDeleted) {
+        return res.status(200).json({ message: `person ${id} was deleted` });
+      }
 
-        const updated = await enrollment.update(
-          { status: "cancelado" },
-          { where: { student_id: Number(id) } },
-          { transaction: t }
-        );
-
-        if (deleted && updated) {
-          return res.status(200).json({ message: `person ${id} was deleted` });
-        }
-
-        return res.status(200).json({ message: `person ${id} not found` });
-      });
+      return res.status(200).json({ message: `person ${id} not found` });
     } catch (error) {
       return res.status(500).json(error);
     }
@@ -118,21 +94,13 @@ class PersonController {
     try {
       const { id } = req.params;
 
-      await generic.sequelize.transaction(async (t) => {
-        const restored = await model.restore({ where: { id: Number(id) } });
+      const restored = await service.restore(id);
 
-        const updated = await enrollment.update(
-          { status: "confirmado" },
-          { where: { student_id: Number(id) } },
-          { transaction: t }
-        );
+      if (restored) {
+        return res.status(200).json({ message: `person ${id} was restored` });
+      }
 
-        if (restored && updated) {
-          return res.status(200).json({ message: `person ${id} was restored` });
-        }
-
-        return res.status(200).json({ message: `person ${id} not found` });
-      });
+      return res.status(200).json({ message: `person ${id} not found` });
     } catch (error) {
       return res.status(500).json(error);
     }

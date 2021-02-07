@@ -29,15 +29,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       active: {
         type: DataTypes.BOOLEAN,
-        validate: {
-          isSendingValue(value) {
-            if (value) {
-              throw new Error(
-                "The field 'active' cannot be changed by POST or PUT"
-              );
-            }
-          },
-        },
+        defaultValue: true,
       },
       email: {
         type: DataTypes.STRING,
