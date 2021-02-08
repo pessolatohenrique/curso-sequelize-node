@@ -1,6 +1,7 @@
-const { Op, literal } = require("sequelize");
-const model = require("../models").Team;
-const enrollment = require("../models").Enrollment;
+const { Op } = require("sequelize");
+const { TeamService } = require("../services");
+
+const service = new TeamService();
 
 class TeamController {
   static async index(req, res) {
@@ -13,10 +14,8 @@ class TeamController {
           .json({ message: "querys start and end are required" });
       }
 
-      const teams = await model.findAll({
-        where: {
-          start_date: { [Op.between]: [start, end] },
-        },
+      const teams = await service.findAll({
+        start_date: { [Op.between]: [start, end] },
       });
       return res.status(200).json(teams);
     } catch (error) {
@@ -25,15 +24,8 @@ class TeamController {
   }
 
   static async getCrowded(req, res) {
-    const MAX_LOTATION = 2;
-
     try {
-      const teams = await enrollment.findAndCountAll({
-        attributes: ["team_id"],
-        group: "team_id",
-        having: literal(`COUNT(team_id) >= ${MAX_LOTATION}`),
-      });
-
+      const teams = await service.getCrowed();
       return res.status(200).json(teams);
     } catch (error) {
       return res.status(500).json(error);
