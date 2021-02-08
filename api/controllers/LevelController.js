@@ -1,4 +1,3 @@
-const model = require("../models").Level;
 const LevelService = require("../services/LevelService");
 
 const service = new LevelService();

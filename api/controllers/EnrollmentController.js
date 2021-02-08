@@ -1,14 +1,15 @@
 const model = require("../models").Enrollment;
+const EnrollmentService = require("../services/EnrollmentService");
+
+const service = new EnrollmentService();
 
 class EnrollmentController {
   static async index(req, res) {
     try {
       const { team_id } = req.params;
-      const enrollments = await model.findAndCountAll({
-        where: {
-          status: "confirmado",
-          team_id: Number(team_id),
-        },
+      const enrollments = await service.findAll({
+        status: "confirmado",
+        team_id: Number(team_id),
       });
 
       return res.status(200).json(enrollments);
@@ -19,13 +20,7 @@ class EnrollmentController {
   static async show(req, res) {
     try {
       const { student_id, enrollment_id } = req.params;
-      const enrollment = await model.findOne({
-        where: {
-          id: Number(enrollment_id),
-          student_id: Number(student_id),
-        },
-      });
-
+      const enrollment = await service.findOne(student_id, enrollment_id);
       return res.status(200).json(enrollment);
     } catch (error) {
       return res.status(500).json(error);
@@ -36,7 +31,7 @@ class EnrollmentController {
     try {
       const { student_id } = req.params;
       const body = { ...req.body, student_id: Number(student_id) };
-      const enrollment = await model.create(body);
+      const enrollment = await service.create(body);
 
       return res.status(200).json(enrollment);
     } catch (error) {
@@ -48,21 +43,13 @@ class EnrollmentController {
     try {
       const { student_id, enrollment_id } = req.params;
 
-      const updated = await model.update(req.body, {
-        where: {
-          id: Number(enrollment_id),
-          student_id: Number(student_id),
-        },
+      const updated = await service.update(req.body, {
+        id: Number(enrollment_id),
+        student_id: Number(student_id),
       });
 
       if (updated) {
-        const enrollment = await model.findOne({
-          where: {
-            id: Number(enrollment_id),
-            student_id: Number(student_id),
-          },
-        });
-
+        const enrollment = await service.findOne(enrollment_id, student_id);
         return res.status(200).json(enrollment);
       }
 
@@ -76,12 +63,7 @@ class EnrollmentController {
     try {
       const { student_id, enrollment_id } = req.params;
 
-      const deleted = await model.destroy({
-        where: {
-          id: Number(enrollment_id),
-          student_id: Number(student_id),
-        },
-      });
+      const deleted = await service.destroy(enrollment_id, student_id);
 
       if (deleted) {
         return res
