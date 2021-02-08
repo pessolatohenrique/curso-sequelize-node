@@ -1,6 +1,6 @@
 const { PersonService } = require("../services");
 
-const service = new PersonService("Person");
+const service = new PersonService();
 
 class PersonController {
   static async index(req, res) {

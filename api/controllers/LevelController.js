@@ -1,9 +1,12 @@
 const model = require("../models").Level;
+const LevelService = require("../services/LevelService");
+
+const service = new LevelService();
 
 class LevelController {
   static async index(req, res) {
     try {
-      const levels = await model.findAll();
+      const levels = await service.findAll();
       return res.status(200).json(levels);
     } catch (error) {
       return res.status(500).json(error);
@@ -14,10 +17,7 @@ class LevelController {
     const { id } = req.params;
 
     try {
-      const level = await model.findOne({
-        where: { id: Number(id) },
-      });
-
+      const level = await service.findOne(id);
       return res.status(200).json(level);
     } catch (error) {
       return res.status(500).json(error);
@@ -26,7 +26,7 @@ class LevelController {
 
   static async store(req, res) {
     try {
-      const level = await model.create(req.body);
+      const level = await service.create(req.body);
       return res.status(200).json(level);
     } catch (error) {
       return res.status(500).json(error);
@@ -36,15 +36,10 @@ class LevelController {
   static async update(req, res) {
     try {
       const { id } = req.params;
-      const updated = await model.update(req.body, {
-        where: { id: Number(id) },
-      });
+      const updated = await service.update(req.body, { id: Number(id) });
 
       if (updated) {
-        const level = await model.findOne({
-          where: { id: Number(id) },
-        });
-
+        const level = await service.findOne(id);
         return res.status(200).json(level);
       }
 
@@ -57,7 +52,7 @@ class LevelController {
   static async delete(req, res) {
     try {
       const { id } = req.params;
-      const deleted = await model.destroy({ where: { id: Number(id) } });
+      const deleted = await service.destroy(id);
 
       if (deleted) {
         return res.status(200).json({ message: `level ${id} was deleted` });
@@ -72,7 +67,7 @@ class LevelController {
   static async restore(req, res) {
     try {
       const { id } = req.params;
-      const restored = await model.restore({ where: { id: Number(id) } });
+      const restored = await service.restore(id);
 
       if (restored) {
         return res.status(200).json({ message: `level ${id} was restored` });
