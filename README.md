@@ -44,3 +44,7 @@ Para utilização do sequelize em linha de comando (CLI), utilizar:
 Por exemplo:
 
     npx sequelize-cli --help
+
+### Observações
+
+Os endpoints criados podem ser importados por meio do arquivo "endpoints.json" em um Software como o Postman (ou semelhante).
